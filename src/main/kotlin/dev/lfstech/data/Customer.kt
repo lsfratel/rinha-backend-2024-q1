@@ -1,22 +1,23 @@
 package dev.lfstech.data
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.komapper.annotation.*
 
-object Customers : IntIdTable("customers") {
-    val name = varchar("name", 100)
-    val credit = long("credit")
-    val balance = long("balance")
-}
+@Serializable
+data class Customer(
+  val id: Int,
+  val name: String,
+  val credit: Long,
+  var balance: Long
+)
 
-class CustomerEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<CustomerEntity>(Customers)
-
-    var name by Customers.name
-    var credit by Customers.credit
-    var balance by Customers.balance
-    val transactions by TransactionEntity referrersOn Transactions.customer
-}
+@KomapperEntityDef(Customer::class)
+@KomapperTable("customers")
+data class CustomerDef(
+  @KomapperId
+  @KomapperAutoIncrement
+  val id: Nothing,
+  val name: Nothing,
+  val credit: Nothing,
+  val balance: Nothing
+)

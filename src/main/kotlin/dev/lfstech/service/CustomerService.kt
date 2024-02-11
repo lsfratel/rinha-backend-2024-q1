@@ -1,33 +1,16 @@
 package dev.lfstech.service
 
-import dev.lfstech.data.CustomerEntity
-import dev.lfstech.rounting.request.TransactionRequest
-import dev.lfstech.util.UnprocessableEntity
-import org.jetbrains.exposed.dao.load
-import org.jetbrains.exposed.sql.transactions.transaction
+import dev.lfstech.data.Customer
+import dev.lfstech.repository.CustomerRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class CustomerService(
-    private val transactionService: TransactionService
-) {
-    fun getById(id: Int) = transaction {
-        CustomerEntity
-            .findById(id)
-    }
+class CustomerService : KoinComponent {
+  private val repository by inject<CustomerRepository>()
 
-    fun transact(id: Int, req: TransactionRequest) = transaction {
-        exec("select pg_advisory_xact_lock($id)")
-        val customer = getById(id)!!
+  fun getById(id: Int) = repository
+    .getById(id)
 
-        if (req.tipo.toString() == "d" && (customer.balance - req.valor < -customer.credit))
-            throw UnprocessableEntity("Crédito insuficiente")
-
-        when (req.tipo.toString()) {
-            "d" -> customer.balance -= req.valor
-            "c" -> customer.balance += req.valor
-        }
-
-        transactionService.create(customer, req)
-
-        customer
-    }
+  fun update(customer: Customer) = repository
+    .update(customer)
 }

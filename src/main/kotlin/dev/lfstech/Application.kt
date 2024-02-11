@@ -1,20 +1,19 @@
 package dev.lfstech
 
-import dev.lfstech.plugins.*
+import dev.lfstech.plugin.configureAll
+import dev.lfstech.rounting.customerRoute
 import io.ktor.server.application.*
-import org.kodein.di.ktor.di
+import io.ktor.server.routing.*
 
 fun main(args: Array<String>) =
-    io.ktor.server.cio.EngineMain.main(args)
+  io.ktor.server.cio.EngineMain.main(args)
 
 fun Application.module() {
-    configureDatabase()
-    configureSerialization()
-    configureStatusPage()
-    configureRequestValidation()
-    configureRouting()
+  configureAll()
 
-    di {
-        bindServices()
+  routing {
+    route("/clientes") {
+      customerRoute()
     }
+  }
 }

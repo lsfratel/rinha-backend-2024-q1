@@ -1,27 +1,33 @@
 package dev.lfstech.data
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.javatime.CurrentDateTime
-import org.jetbrains.exposed.sql.javatime.datetime
+import dev.lfstech.util.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
+import org.komapper.annotation.*
+import java.time.LocalDateTime
 
-object Transactions : IntIdTable("transactions") {
-    val customer = reference("customer_id", Customers)
-    val type = char("type")
-    val amount = long("amount")
-    val description = varchar("description", 10)
-    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
-}
+@Serializable
+data class Transaction(
+  val id: Int,
+  val customerId: Int,
+  val type: String,
+  val amount: Long,
+  val description: String,
+  @Serializable(with = LocalDateTimeSerializer::class)
+  val createdAt: LocalDateTime = LocalDateTime.now()
+)
 
-class TransactionEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<TransactionEntity>(Transactions)
-
-    var type by Transactions.type
-    var amount by Transactions.amount
-    var description by Transactions.description
-    var createdAt by Transactions.createdAt
-    var customer by CustomerEntity referencedOn Transactions.customer
-}
-
+@KomapperEntityDef(Transaction::class)
+@KomapperTable("transactions")
+data class TransactionDef(
+  @KomapperId
+  @KomapperAutoIncrement
+  val id: Nothing,
+  @KomapperColumn("customer_id")
+  val customerId: Nothing,
+  @KomapperColumn("type")
+  val type: Nothing,
+  val amount: Nothing,
+  val description: Nothing,
+  @KomapperCreatedAt
+  val createdAt: Nothing
+)
