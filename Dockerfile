@@ -1,5 +1,5 @@
 FROM ubuntu:mantic
 
-COPY build/native/nativeCompile/graalvm-server /graalvm-server
+COPY native/rinha-2024-q1 /rinha-2024-q1
 
-CMD ["/graalvm-server"]
+CMD ["/rinha-2024-q1"]

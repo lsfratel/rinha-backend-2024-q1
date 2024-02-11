@@ -1,0 +1,67 @@
+{
+  "resources":{
+  "includes":[{
+    "pattern":"\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/io.ktor.serialization.kotlinx.KotlinxSerializationExtensionProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/io.ktor.server.config.ConfigLoader\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.nio.channels.spi.SelectorProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.sql.Driver\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.util.ModuleVisibilityHelper\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.core.spi.DataTypeConverter\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.core.spi.LoggerFacadeFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.core.spi.LoggerFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.core.spi.StatementInspectorFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.jdbc.spi.JdbcDataTypeProviderFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.jdbc.spi.JdbcSessionFactory\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.komapper.jdbc.spi.JdbcUserDefinedDataType\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
+  }, {
+    "pattern":"\\Qapplication.conf\\E"
+  }, {
+    "pattern":"\\Qkotlin/collections/collections.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qkotlin/kotlin.kotlin_builtins\\E"
+  }, {
+    "pattern":"\\Qlogback-test.scmo\\E"
+  }, {
+    "pattern":"\\Qlogback-test.xml\\E"
+  }, {
+    "pattern":"\\Qlogback.scmo\\E"
+  }, {
+    "pattern":"\\Qlogback.xml\\E"
+  }, {
+    "pattern":"\\Qorg/postgresql/driverconfig.properties\\E"
+  }, {
+    "pattern":"\\Qreference.conf\\E"
+  }, {
+    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfkc.nrm\\E"
+  }, {
+    "pattern":"java.base:\\Qsun/net/www/content-types.properties\\E"
+  }]},
+  "bundles":[]
+}

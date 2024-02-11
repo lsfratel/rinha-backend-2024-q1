@@ -13,22 +13,18 @@ fun configureDatabase(env: ApplicationEnvironment): JdbcDatabase {
   val port = c.property("db.port").getString()
   val server = c.property("db.server").getString()
 
-  val database: JdbcDatabase by lazy {
-    val dataSource = HikariDataSource(HikariConfig().apply {
-      jdbcUrl = "jdbc:postgresql://$server:$port/$db"
-      username = c.property("db.user").getString()
-      password = c.property("db.password").getString()
-      addDataSourceProperty("cacheServerConfiguration", true)
-      addDataSourceProperty("cachePrepStmts", "true")
-      addDataSourceProperty("useUnbufferedInput", "false")
-      addDataSourceProperty("prepStmtCacheSize", "4096")
-      addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
-      maximumPoolSize = 4
-      minimumIdle = 4
-      validate()
-    })
-    JdbcDatabase(dataSource, PostgreSqlJdbcDialect())
-  }
+  val dataSource = HikariDataSource(HikariConfig().apply {
+    jdbcUrl = "jdbc:postgresql://$server:$port/$db"
+    username = c.property("db.user").getString()
+    password = c.property("db.password").getString()
+    maximumPoolSize = 2
+    minimumIdle = 2
+    isAutoCommit = false
+    connectionTimeout = 8000
+    validate()
+  })
+
+  val database = JdbcDatabase(dataSource, PostgreSqlJdbcDialect())
 
   return database
 }

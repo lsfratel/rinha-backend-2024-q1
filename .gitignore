@@ -1,9 +1,9 @@
 .gradle
 build/
+native/rinha-2024-q1
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
 ### STS ###
 .apt_generated
 .classpath

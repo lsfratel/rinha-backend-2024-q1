@@ -42,10 +42,10 @@ fun Application.configureStatusPage() {
         )
 
         is InsufficientCreditException -> call.respond(
-          HttpStatusCode.UnprocessableEntity,
+          cause.statusCode,
           ExceptionResponse(
             message = cause.message.toString(),
-            code = HttpStatusCode.UnprocessableEntity.value
+            code = cause.statusCode.value
           )
         )
 

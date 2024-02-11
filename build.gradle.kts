@@ -10,7 +10,6 @@ plugins {
 
   id("io.ktor.plugin") version "2.3.7"
   id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
-  id("org.graalvm.buildtools.native") version "0.9.28"
   id("com.google.devtools.ksp") version "1.9.22-1.0.16"
 }
 
@@ -21,43 +20,17 @@ application {
   mainClass.set("io.ktor.server.cio.EngineMain")
 }
 
-graalvmNative {
-  binaries {
-    named("main") {
-      fallback.set(false)
-      verbose.set(true)
-
-      buildArgs.add("--initialize-at-build-time=kotlinx.serialization.modules.SerializersModuleKt")
-      buildArgs.add("--initialize-at-build-time=kotlinx.serialization.json.Json")
-      buildArgs.add("--initialize-at-build-time=ch.qos.logback")
-      buildArgs.add("--initialize-at-build-time=io.ktor,kotlin")
-      buildArgs.add("--initialize-at-build-time=org.slf4j.LoggerFactory")
-
-      buildArgs.add("--gc=G1")
-      buildArgs.add("-H:+InstallExitHandlers")
-      buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
-      buildArgs.add("-H:+ReportExceptionStackTraces")
-
-      imageName.set("graalvm-server")
-    }
-
-//    all {
-//      resources.autodetect()
-//    }
-  }
-}
-
 repositories {
   mavenCentral()
 }
 
 dependencies {
-  implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-cio-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-status-pages-jvm:$ktorVersion")
-  implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
+  implementation("io.ktor:ktor-server-core-jvm")
+  implementation("io.ktor:ktor-server-content-negotiation-jvm")
+  implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
+  implementation("io.ktor:ktor-server-cio-jvm")
+  implementation("io.ktor:ktor-server-status-pages-jvm")
+  implementation("io.ktor:ktor-server-request-validation")
   implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
   platform("org.komapper:komapper-platform:$komapperVersion").let {
