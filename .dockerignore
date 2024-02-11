@@ -4,5 +4,7 @@ build/
 load-test/
 native/
 participacao/
+!native/rinha-2024-q1
 docker-compose.yml
 executar-teste-local.sh
+Makefile
