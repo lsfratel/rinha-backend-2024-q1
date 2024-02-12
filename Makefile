@@ -11,10 +11,9 @@ native.build:
      	-H:+InstallExitHandlers \
      	-H:+ReportUnsupportedElementsAtRuntime \
      	-H:+ReportExceptionStackTraces \
-     	-R:MaxRAMPercentage=90 \
+     	-R:MaximumHeapSizePercent=90 \
      	--pgo=native/default.iprof \
-     	-march=native \
-     	--gc=G1 \
+     	--gc=serial \
      	--no-fallback \
      	--enable-sbom \
      	--initialize-at-build-time=io.ktor,kotlin,org.slf4j,ch.qos.logback,kotlinx.serialization \
