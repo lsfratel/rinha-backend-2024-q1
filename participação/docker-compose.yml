@@ -24,7 +24,7 @@ services:
   lighttpd:
     image: jitesoft/lighttpd
     volumes:
-      - ./participação/lighttpd.conf:/etc/lighttpd/lighttpd.conf
+      - ./lighttpd.conf:/etc/lighttpd/lighttpd.conf
     ports:
       - "9999:9999"
     depends_on:
@@ -47,8 +47,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=rinha-2024-q1
     volumes:
-      - ./participação/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./participação/postgres.conf:/etc/postgresql/postgresql.conf
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres.conf:/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
