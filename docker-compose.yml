@@ -2,16 +2,11 @@ version: "3.5"
 
 services:
   api01: &api
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     hostname: api01
     environment:
-      - PG_HOSTNAME=db
-      - PG_USER=postgres
-      - PG_PASSWORD=postgres
-      - PG_DATABASE=rinha-2024-q1
-      - PG_PORT=5432
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgres://postgres:postgres@db/rinha-2024-q1
       - PORT=3000
     depends_on:
       db:
@@ -20,7 +15,7 @@ services:
       resources:
         limits:
           cpus: "0.45"
-          memory: "150MB"
+          memory: "175MB"
 
   api02:
     <<: *api
@@ -29,17 +24,21 @@ services:
   lighttpd:
     image: jitesoft/lighttpd
     volumes:
-      - ./participacao/lighttpd.conf:/etc/lighttpd/lighttpd.conf
+      - ./participação/lighttpd.conf:/etc/lighttpd/lighttpd.conf
     ports:
       - "9999:9999"
     depends_on:
+      api01:
+        condition: service_started
+      api02:
+        condition: service_started
       db:
         condition: service_healthy
     deploy:
       resources:
         limits:
           cpus: '0.15'
-          memory: '60MB'
+          memory: '30MB'
 
   db:
     image: postgres:latest
@@ -50,9 +49,10 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./participacao/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./participação/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./participação/postgres.conf:/etc/postgresql/postgresql.conf
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -61,7 +61,3 @@ services:
         limits:
           cpus: "0.45"
           memory: "190MB"
-
-networks:
-  default:
-    driver: bridge

@@ -1,0 +1,5 @@
+bottle @ git+https://github.com/bottlepy/bottle@3fdb8b
+psycopg[binary,pool]
+jsonschema==4.21.1
+bjoern==3.2.2
+ujson==5.9.0
