@@ -2,7 +2,7 @@ from inspect import signature
 from bottle import PluginError
 
 
-class PsycoPG():
+class PsycoPG:
     name = 'psycopg'
     api = 2
 
@@ -11,12 +11,11 @@ class PsycoPG():
 
     def setup(self, app):
         for other in app.plugins:
-            if not isinstance(other, PsycoPG): continue
+            if not isinstance(other, PsycoPG):
+                continue
             if other.keyword == self.keyword:
                 raise PluginError(
-                    "Found another PsycoPG plugin with "
-                    "conflicting settings (non-unique keyword)."
-                )
+                    "Found another PsycoPG plugin with conflicting settings (non-unique keyword).")
 
     def apply(self, callback, context):
         url = context.config.get('DATABASE_URL')
@@ -26,7 +25,7 @@ class PsycoPG():
 
         args = signature(context.callback)
 
-        if "conn" not in args.parameters:
+        if not args.parameters.get("conn"):
             return callback
 
         def wrapper(*args, **kwargs):

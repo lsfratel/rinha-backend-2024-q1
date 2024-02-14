@@ -17,7 +17,7 @@ def get_queries():
         with file.open(mode="r", encoding="utf-8") as sql:
             content = sql.read()
             if result := re.search(settings.QUERY_KEY_REGEX, content):
-                queries.update({ result.group(1): content })
+                queries.update({result.group(1): content})
             else:
                 raise Exception("Malformed query")
     return queries
@@ -37,11 +37,8 @@ def make_app():
 
 
 def create_connection_pool(app: Bottle):
-    pool = ConnectionPool(
-        open=True,
-        conninfo=app.config.get("DATABASE_URL"),
-        kwargs=dict(row_factory=dict_row)
-    )
+    pool = ConnectionPool(open=True, conninfo=app.config.get(
+        "DATABASE_URL"), kwargs=dict(row_factory=dict_row))
     pool.wait()
     app.config.update({"db_pool": pool})
 
