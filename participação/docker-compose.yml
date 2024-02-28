@@ -2,20 +2,27 @@ version: "3.5"
 
 services:
   api01: &api
-    image: lsfratel/rinha-2024-q1:python
+    image: lsfratel/rinha-2024-q1:python-own-framework
     hostname: api01
     environment:
+      - WORKERS=1
+      - THREADS=8
+      - PORT=3000
       - PYTHONUNBUFFERED=1
       - DATABASE_URL=postgres://postgres:postgres@db/rinha-2024-q1
-      - PORT=3000
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/clientes/1/extrato || exit 1
+      interval: 5s
+      timeout: 2s
+      retries: 5
     deploy:
       resources:
         limits:
-          cpus: "0.45"
-          memory: "175MB"
+          cpus: "0.35"
+          memory: "120MB"
 
   api02:
     <<: *api
@@ -37,7 +44,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.15'
+          cpus: '0.20'
           memory: '30MB'
 
   db:
@@ -48,14 +55,13 @@ services:
       - POSTGRES_DB=rinha-2024-q1
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./postgres.conf:/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 2s
       retries: 5
     deploy:
       resources:
         limits:
-          cpus: "0.45"
-          memory: "190MB"
+          cpus: "0.60"
+          memory: "300MB"

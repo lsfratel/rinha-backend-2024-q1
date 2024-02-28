@@ -1,47 +1,72 @@
-from bottle import HTTPError, request
+from datetime import datetime, UTC
+from restcraft import RestCraft
+from restcraft.context import Context
 
-from rinha import make_app, validate
-from rinha.schemas import transaction_validator
-
-
-app, queries = make_app()
-
-
-@app.get("/clientes/<id:int>/extrato")
-def customer_statement(id, conn):
-    customer_statement = conn.execute(
-        queries.get("get_statement"), (id,)).fetchone()
-
-    if not customer_statement:
-        raise HTTPError(404, "Customer not found")
-
-    return customer_statement
+from rinha import get_all
+from rinha.utils import validate_transaction_input
 
 
-@app.post("/clientes/<id:int>/transacoes")
-@validate(transaction_validator)
-def customer_transactions(id, conn):
-    req = request.json
-    with conn.transaction():
-        conn.execute("select pg_advisory_xact_lock(%s)", (id,))
+app = RestCraft()
+queries, pool = get_all()
 
-        customer = conn.execute(queries.get("get_customer"), (id,)).fetchone()
 
+@app.route("/clientes/:id/extrato")
+def customer_statement(ctx: Context):
+    params = ctx.params
+
+    with pool.connection() as conn:
+        customer = conn.execute(queries["get_customer"], params).fetchone()
         if not customer:
-            raise HTTPError(404, "Customer not found")
+            ctx.set_status = 404
+            ctx.set_body = "Customer not found"
+            return ctx
+        transactions = conn.execute(queries["get_transactions"], params).fetchall()
+        ctx.set_body = {
+            "saldo": {
+                "total": customer["balance"],
+                "limite": customer["credit"],
+                "data_extrato": datetime.now(UTC)
+            },
+            "ultimas_transacoes": [
+                {
+                    "tipo": t["type"],
+                    "valor": t["amount"],
+                    "descricao": t["description"],
+                    "realizado_em": t["created_at"]
+                } for t in transactions
+            ]
+        }
+    return ctx
 
-        if req["tipo"] == "d" and (customer["balance"] - req["valor"] < -customer["credit"]):
-            raise HTTPError(422, "Saldo insuficiente")
 
-        if req["tipo"] == "d":
-            customer["balance"] -= req["valor"]
-        else:
-            customer["balance"] += req["valor"]
+@app.route("/clientes/:id/transacoes", method="POST")
+def customer_transactions(ctx: Context):
+    body = ctx.json
+    params = ctx.params
+    errors = validate_transaction_input(body)
+    if not body or errors:
+        ctx.set_status = 422
+        ctx.set_body = errors
+        return ctx
 
-        conn.execute(queries.get("update_customer"),
-                     (customer["balance"], customer["id"]))
-
-        conn.execute(queries.get("create_transaction"),
-                     (customer["id"], req["tipo"], req["valor"], req["descricao"]))
-
-        return dict(limite=customer["credit"], saldo=customer["balance"])
+    with pool.connection() as conn:
+        customer = conn.execute(queries["get_customer"], params).fetchone()
+        if not customer:
+            ctx.set_status = 404
+            ctx.set_body = "Customer not found"
+            return ctx
+        conn.transaction()
+        t_type = body["tipo"]
+        q = queries["update_balance_debit"] if t_type == "d" else queries["update_balance_credit"]
+        ret = conn.execute(q, {"id": params["id"], "value": body["valor"]}).fetchone()
+        if not ret:
+            conn.rollback()
+            ctx.set_status = 422
+            ctx.set_body = "Saldo insuficiente"
+            return ctx
+        conn.execute(queries["create_transaction"], {"id": params["id"],
+                                                    "type": t_type,
+                                                    "amount": body["valor"],
+                                                    "description": body["descricao"]})
+        ctx.set_body = ret
+    return ctx
